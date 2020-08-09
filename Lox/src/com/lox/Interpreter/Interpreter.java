@@ -104,6 +104,25 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Object visitLogicalExpr(Expr.Logical expr) {
+        Object left = evaluate(expr.left);
+
+        switch (expr.operator.type) {
+            case AND:
+                if (!isTruthy(left)) {
+                    return left;
+                }
+
+            case OR:
+                if (isTruthy(expr.left)) {
+                    return left;
+                }
+        }
+
+        return evaluate(expr.right);
+    }
+
+    @Override
     public Object visitUnaryExpr(Expr.Unary expr) {
         Object right = evaluate(expr.right);
 
@@ -172,7 +191,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitIfStmt(Stmt.If statement) {
         if (isTruthy(statement.condition)) {
-            evaluate(statement.thenBranch);
+            execute(statement.thenBranch);
+        } else {
+            execute(statement.elseBranch);
         }
         return null;
     }
@@ -185,6 +206,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
 
         environment.define(var.name.lexeme, value);
+        return null;
+    }
+
+    @Override
+    public Void visitWhileStmt(Stmt.While statement) {
+        while (isTruthy(statement.condition)) {
+            execute(statement.body);
+        }
+
         return null;
     }
 

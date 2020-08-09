@@ -1,8 +1,7 @@
 package com.lox.Misc;
 
 import com.lox.Grammar.Expr;
-import com.lox.Token;
-import com.lox.TokenType;
+import com.lox.Grammar.*;
 
 public class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
@@ -41,6 +40,11 @@ public class AstPrinter implements Expr.Visitor<String> {
     public String visitLiteralExpr(Expr.Literal expr) {
         if (expr.value == null) return "nil";
         return expr.value.toString();
+    }
+
+    @Override
+    public String visitLogicalExpr(Expr.Logical statement) {
+        return null;
     }
 
     @Override

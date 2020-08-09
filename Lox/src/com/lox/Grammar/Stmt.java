@@ -9,6 +9,7 @@ public abstract class Stmt {
         R visitIfStmt(If statement);
         R visitPrintStmt(Print statement);
         R visitVarStmt(Var statement);
+        R visitWhileStmt(While statement);
     }
     public static class Block extends Stmt {
         public Block(List<Stmt> statements) {
@@ -69,6 +70,19 @@ public abstract class Stmt {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitVarStmt(this);
+        }
+    }
+    public static class While extends Stmt {
+        public While(Expr condition, Stmt body) {
+            this.condition = condition;
+            this.body = body;
+        }
+
+        public final Expr condition;
+        public final Stmt body;
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitWhileStmt(this);
         }
     }
 

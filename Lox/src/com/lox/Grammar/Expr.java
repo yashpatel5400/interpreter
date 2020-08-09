@@ -8,6 +8,7 @@ public abstract class Expr {
         R visitBinaryExpr(Binary statement);
         R visitGroupingExpr(Grouping statement);
         R visitLiteralExpr(Literal statement);
+        R visitLogicalExpr(Logical statement);
         R visitUnaryExpr(Unary statement);
         R visitVariableExpr(Variable statement);
     }
@@ -59,6 +60,21 @@ public abstract class Expr {
         @Override
         public <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpr(this);
+        }
+    }
+    public static class Logical extends Expr {
+        public Logical(Expr left, Token operator, Expr right) {
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        public final Expr left;
+        public final Token operator;
+        public final Expr right;
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpr(this);
         }
     }
     public static class Unary extends Expr {
