@@ -6,11 +6,20 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
+    private static final Interpreter interpreter = new Interpreter();
 
     static boolean hadError = false;
+    static boolean hadRuntimeError = false;
+
+    static void runtimeError(RuntimeError error) {
+        System.err.println(error.getMessage() +
+                "\n[line " + error.token.line + "]");
+        hadRuntimeError = true;
+    }
 
     static void error(Token token, String message) {
         if (token.type == TokenType.EOF) {
@@ -36,18 +45,22 @@ public class Main {
 
         // For now, just print the tokens.
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         // Stop if there was a syntax error.
-        if (hadError) return;
-
-        System.out.println(new AstPrinter().print(expression));
+        if (hadError) {
+            Expr expression = parser.parseExpression();
+            interpreter.interpret(expression);
+            return;
+        }
+        interpreter.interpret(statements);
     }
 
     private static void runFile(String path) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(path));
         run(new String(bytes, Charset.defaultCharset()));
         if (hadError) System.exit(65);
+        if (hadRuntimeError) System.exit(70);
     }
 
     private static void runPrompt() throws IOException {
