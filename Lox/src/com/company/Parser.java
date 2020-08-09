@@ -221,14 +221,6 @@ public class Parser {
         }
     }
 
-    Expr parseExpression() {
-        try {
-            return expression();
-        } catch (ParseError error) {
-            return null;
-        }
-    }
-
     List<Stmt> parse() {
         List<Stmt> statements = new ArrayList<>();
         while (!isAtEnd()) {

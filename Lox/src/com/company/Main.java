@@ -49,8 +49,6 @@ public class Main {
 
         // Stop if there was a syntax error.
         if (hadError) {
-            Expr expression = parser.parseExpression();
-            interpreter.interpret(expression);
             return;
         }
         interpreter.interpret(statements);
