@@ -116,7 +116,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Object visitVariableExpr(Expr.Variable variable) {
-        return environment.get(variable.name);
+        Object envValue = environment.get(variable.name);
+        if (envValue == null) {
+            throw new RuntimeError(variable.name, "Accessing non-defined variable.");
+        }
+        return envValue;
     }
 
     private String stringify(Object object) {
