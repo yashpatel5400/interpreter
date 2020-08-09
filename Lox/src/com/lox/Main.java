@@ -1,4 +1,10 @@
-package com.company;
+package com.lox;
+
+import com.lox.Interpreter.*;
+import com.lox.Grammar.Token;
+import com.lox.Grammar.TokenType;
+import com.lox.Parser.Parser;
+import com.lox.Scanner.Scanner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +12,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -15,13 +20,13 @@ public class Main {
     static boolean hadError = false;
     static boolean hadRuntimeError = false;
 
-    static void runtimeError(RuntimeError error) {
+    public static void runtimeError(RuntimeError error) {
         System.err.println(error.getMessage() +
                 "\n[line " + error.token.line + "]");
         hadRuntimeError = true;
     }
 
-    static void error(Token token, String message) {
+    public static void error(Token token, String message) {
         if (token.type == TokenType.EOF) {
             report(token.line, " at end", message);
         } else {
@@ -29,7 +34,7 @@ public class Main {
         }
     }
 
-    static void error(int line, String message) {
+    public static void error(int line, String message) {
         report(line, "", message);
     }
 
@@ -39,13 +44,13 @@ public class Main {
         hadError = true;
     }
 
-    private static void run(String source) {
+    private static <Stmt> void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
         // For now, just print the tokens.
         Parser parser = new Parser(tokens);
-        List<Stmt> statements = parser.parse();
+        List<com.lox.Grammar.Stmt> statements = parser.parse();
 
         // Stop if there was a syntax error.
         if (hadError) {

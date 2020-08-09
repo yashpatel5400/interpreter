@@ -1,4 +1,6 @@
-package com.company;
+package com.lox.Interpreter;
+
+import com.lox.Grammar.Token;
 
 import java.util.HashMap;
 import java.util.Map;

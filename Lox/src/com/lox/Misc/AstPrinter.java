@@ -1,4 +1,8 @@
-package com.company;
+package com.lox.Misc;
+
+import com.lox.Grammar.Expr;
+import com.lox.Token;
+import com.lox.TokenType;
 
 public class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {

@@ -1,16 +1,22 @@
-package com.company;
+package com.lox.Parser;
+
+import com.lox.Grammar.Expr;
+import com.lox.Grammar.Stmt;
+import com.lox.Grammar.Token;
+import com.lox.Grammar.TokenType;
+import com.lox.Main;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.company.TokenType.*;
+import static com.lox.Grammar.TokenType.*;
 
 public class Parser {
     private static class ParseError extends RuntimeException {};
     private final List<Token> tokens;
     private int current = 0;
 
-    Parser(List<Token> tokens) {
+    public Parser(List<Token> tokens) {
         this.tokens = tokens;
     }
 
@@ -177,6 +183,19 @@ public class Parser {
         return new Stmt.Print(expr);
     }
 
+    Stmt ifStatement() {
+        consume(LEFT_PAREN, "Expect ( after if");
+        Expr expr = expression();
+        consume(RIGHT_PAREN, "Expect ) after if");
+
+        Stmt thenBranch = statement();
+        Stmt elseBranch = null;
+        if (match(ELSE)) {
+            elseBranch = statement();
+        }
+        return new Stmt.If(expr, thenBranch, elseBranch);
+    }
+
     Stmt expressionStatement() {
         Expr expr = expression();
         consume(SEMICOLON, "Expect ; after expression");
@@ -195,6 +214,7 @@ public class Parser {
 
     Stmt statement() {
         if (match(PRINT)) return printStatement();
+        if (match(IF)) return ifStatement();
         if (match(LEFT_BRACE)) return new Stmt.Block(block());
         return expressionStatement();
     }
@@ -221,7 +241,7 @@ public class Parser {
         }
     }
 
-    List<Stmt> parse() {
+    public List<Stmt> parse() {
         List<Stmt> statements = new ArrayList<>();
         while (!isAtEnd()) {
             statements.add(declaration());

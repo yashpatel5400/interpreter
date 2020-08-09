@@ -1,6 +1,10 @@
-package com.company;
+package com.lox.Interpreter;
 
-import java.util.ArrayList;
+import com.lox.Grammar.Expr;
+import com.lox.Grammar.Stmt;
+import com.lox.Grammar.Token;
+import com.lox.Main;
+
 import java.util.List;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
@@ -84,9 +88,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             case SLASH:
                 checkNumberOperators(expr.operator, left, right);
                 return (double)left / (double)right;
+            default:
+                throw new IllegalStateException("Unexpected value: " + expr.operator.type);
         }
-
-        return null;
     }
 
     @Override
@@ -166,6 +170,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitIfStmt(Stmt.If statement) {
+        if (isTruthy(statement.condition)) {
+            evaluate(statement.thenBranch);
+        }
+        return null;
+    }
+
+    @Override
     public Void visitVarStmt(Stmt.Var var) {
         Object value = null;
         if (var.initializer != null) {
@@ -189,7 +201,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
     }
 
-    void interpret(List<Stmt> statements) {
+    public void interpret(List<Stmt> statements) {
         try {
             for (Stmt statement : statements) {
                 execute(statement);

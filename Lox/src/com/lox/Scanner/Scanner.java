@@ -1,13 +1,17 @@
-package com.company;
+package com.lox.Scanner;
+
+import com.lox.Grammar.Token;
+import com.lox.Grammar.TokenType;
+import com.lox.Main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.company.TokenType.*;
+import static com.lox.Grammar.TokenType.*;
 
-class Scanner {
+public class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
 
@@ -183,7 +187,7 @@ class Scanner {
         }
     }
 
-    List<Token> scanTokens() {
+    public List<Token> scanTokens() {
         while (!isAtEnd()) {
             // We are at the beginning of the next lexeme.
             start = current;
@@ -194,7 +198,7 @@ class Scanner {
         return tokens;
     }
 
-    Scanner(String source) {
+    public Scanner(String source) {
         this.source = source;
     }
 }
